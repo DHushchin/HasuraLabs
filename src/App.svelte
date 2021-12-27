@@ -23,7 +23,7 @@
   const client = createApolloClient();
   setClient(client);
 
-  const music = subscribe(OperationDocsHelper.SUBSCRIPTION);
+  const music = subscribe(OperationDocsHelper.SUBSCRIPTION());
 
   const stringToNumber = (string) => {
     return isNaN(+string) ? 0 : +string;
