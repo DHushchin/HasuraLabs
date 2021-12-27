@@ -1,6 +1,7 @@
 class RequestHelper {
-  API_URL = "https://hasura-lab-3.herokuapp.com/v1/graphql";
-
+  constructor() {
+    this.API_URL = "https://hasura-lab-3.herokuapp.com/v1/graphql";
+  }
   async fetchGraphQL(operationsDoc, operationName, variables) {
     const result = await fetch(this.API_URL, {
       method: "POST",
@@ -38,7 +39,7 @@ class RequestHelper {
   async startExecuteMyMutation(operationsDoc, variables = {}) {
     const { errors, data } = await this.executeMyMutation(
       operationsDoc,
-      variables
+      variables,
     );
 
     if (errors) {

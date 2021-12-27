@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client";
 
 export class OperationDocsHelper {
-  static QUERY_GET_ALL = () => `
+  static QUERY_GET_All() {
+    return `
     query MyQuery {
       lab3_music {
         author
@@ -12,8 +13,10 @@ export class OperationDocsHelper {
       }
     }
   `;
+  }
 
-  static MUTATION_INSERT_ONE = (name, author, genre, listenings) => `
+  static MUTATION_INSERT_ONE(name, author, genre, listenings) {
+    return `
   mutation MyMutation {
     insert_lab3_music(objects: {name: "${name}", author: "${author}", listenings: ${listenings}, genre: "${genre}"}) {
       returning {
@@ -26,8 +29,10 @@ export class OperationDocsHelper {
     }
    }
   `;
+  }
 
-  static MUTATION_DELETE = () => `
+  static MUTATION_DELETE() {
+    return `
   mutation MyMutation($name: String, $author: String) {
     delete_lab3_music(where: {name: {_eq: $name}, _and: {author: {_eq: $author}}}) {
       returning {
@@ -40,16 +45,19 @@ export class OperationDocsHelper {
     }
   }
   `;
+  }
 
-  static SUBSCRIPTION = gql`
-    subscription MySubscription {
-      lab3_music {
-        id
-        name
-        author
-        listenings
-        genre
+  static SUBSCRIPTION() {
+    return gql`
+      subscription MySubscription {
+        lab3_music {
+          id
+          name
+          author
+          listenings
+          genre
+        }
       }
-    }
-  `;
+    `;
+  }
 }
