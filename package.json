@@ -1,5 +1,5 @@
 {
-  "name": "HasuraLabs",
+  "name": "web-lab-3",
   "version": "1.0.0",
   "description": "This directory is a brief example of a [Svelte](https://svelte.dev/) site that can be deployed with Vercel and zero-configuration. If you need to use API Routes, we recommend using our [SvelteKit example](https://github.com/vercel/vercel/tree/main/examples/sveltekit).",
   "main": "rollup.config.js",
@@ -18,17 +18,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DHushchin/HasuraLabs.git"
+    "url": "git+https://github.com/DHushchin/web-lab-3.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DHushchin/HasuraLabs/issues"
+    "url": "https://github.com/DHushchin/web-lab-3/issues"
   },
-  "homepage": "https://github.com/DHushchin/HasuraLabs#readme",
+  "homepage": "https://github.com/DHushchin/web-lab-3#readme",
   "dependencies": {
     "@apollo/client": "^3.5.6",
+    "@rollup/plugin-replace": "^3.0.1",
+    "dotenv": "^10.0.0",
     "graphql": "^16.2.0",
     "subscriptions-transport-ws": "^0.11.0",
     "svelte-apollo": "^0.4.0"

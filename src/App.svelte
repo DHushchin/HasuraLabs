@@ -7,7 +7,7 @@
 
   function createApolloClient() {
     const wsLink = new WebSocketLink({
-      uri: "wss://hasura-lab-3.herokuapp.com/v1/graphql",
+      uri: WS_LINK,
       options: {
         reconnect: true,
       },

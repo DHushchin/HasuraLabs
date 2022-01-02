@@ -1,18 +1,17 @@
 class RequestHelper {
   constructor() {
-    this.API_URL = "https://hasura-lab-3.herokuapp.com/v1/graphql";
+    this.API_URL = API_ROOT;
   }
+
   async fetchGraphQL(operationsDoc, operationName, variables) {
-    const result = await fetch(this.API_URL, {
+    return fetch(this.API_URL, {
       method: "POST",
       body: JSON.stringify({
         query: operationsDoc,
         variables: variables,
         operationName: operationName,
       }),
-    });
-
-    return await result.json();
+    }).then((response) => response.json());
   }
 
   fetchMyQuery(operationsDoc) {

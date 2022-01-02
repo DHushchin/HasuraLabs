@@ -4,6 +4,10 @@ import resolve from "@rollup/plugin-node-resolve";
 import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
 import css from "rollup-plugin-css-only";
+import replace from "@rollup/plugin-replace";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -46,6 +50,10 @@ export default {
         // enable run-time checks when not in production
         dev: !production,
       },
+    }),
+    replace({
+      WS_LINK: JSON.stringify(process.env.WS_LINK),
+      API_ROOT: JSON.stringify(process.env.API_ROOT),
     }),
     // we'll extract any component CSS out into
     // a separate file - better for performance
