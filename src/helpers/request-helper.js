@@ -1,3 +1,5 @@
+import { errorMsg } from "./store";
+
 class RequestHelper {
   constructor() {
     this.API_URL = API_ROOT;
@@ -22,12 +24,9 @@ class RequestHelper {
     const { errors, data } = await this.fetchMyQuery(operationsDoc);
 
     if (errors) {
-      // handle those errors like a pro
-      console.error(errors);
+      errorMsg.set(`Error -> ${errors}`);
     }
 
-    // do something great with this precious data
-    console.log(data);
     return data;
   }
 
@@ -42,12 +41,9 @@ class RequestHelper {
     );
 
     if (errors) {
-      // handle those errors like a pro
-      console.error(errors);
+      errorMsg.set(`Error -> ${errors}`);
     }
 
-    // do something great with this precious data
-    console.log(data);
     return data;
   }
 }
