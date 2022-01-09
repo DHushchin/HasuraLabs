@@ -53,7 +53,7 @@ export default {
     }),
     replace({
       WS_LINK: JSON.stringify(process.env.WS_LINK),
-      API_ROOT: JSON.stringify(process.env.API_ROOT),
+      API_URL: JSON.stringify(process.env.API_URL),
     }),
     // we'll extract any component CSS out into
     // a separate file - better for performance

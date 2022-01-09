@@ -15,35 +15,33 @@ export class OperationDocsHelper {
   `;
   }
 
-  static MUTATION_INSERT_ONE(name, author, genre, listenings) {
+  static MUTATION_INSERT() {
     return `
-  mutation MyMutation {
-    insert_lab3_music(objects: {name: "${name}", author: "${author}", listenings: ${listenings}, genre: "${genre}"}) {
-      returning {
-        id
-        name
+    mutation MyMutation($genre: String, $author: String, $name: String, $listenings: Int) {
+      insert_lab3_music_one(object: {author: $author, genre: $genre, name: $name, listenings: $listenings}) {
         author
-        listenings
         genre
+        id
+        listenings
+        name
       }
     }
-   }
   `;
   }
 
   static MUTATION_DELETE() {
     return `
-  mutation MyMutation($name: String, $author: String) {
-    delete_lab3_music(where: {name: {_eq: $name}, _and: {author: {_eq: $author}}}) {
-      returning {
-        id
-        name
-        author
-        listenings
-        genre
+    mutation MyMutation($id: Int) {
+      delete_lab3_music(where: {id: {_eq: $id}}) {
+        returning {
+          author
+          genre
+          id
+          listenings
+          name
+        }
       }
     }
-  }
   `;
   }
 

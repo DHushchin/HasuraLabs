@@ -4,7 +4,7 @@
   import { ApolloClient, InMemoryCache } from "@apollo/client";
   import { setClient, subscribe } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-  import { Jumper } from "svelte-loading-spinners";
+  import { Circle3 } from "svelte-loading-spinners";
   import { errorMsg, spinnersAmount } from "./helpers/store";
 
   function createApolloClient() {
@@ -22,39 +22,41 @@
     });
   }
 
-  let errorValue, spinnervalue, addDisableFlag, deleteDisableFlag;
+  let addDisableFlag = false,
+    deleteDisableFlag = false;
   const tableInfo = {};
-
-  errorMsg.subscribe((msg) => {
-    errorValue = msg;
-  });
-
-  spinnersAmount.subscribe((amount) => {
-    spinnervalue = amount;
-  });
 
   const client = createApolloClient();
   setClient(client);
 
   const music = subscribe(OperationDocsHelper.SUBSCRIPTION());
-  errorMsg.set(" ");
+
   const stringToNumber = (string) => {
     return isNaN(+string) ? 0 : +string;
   };
 
   function changeFlag(disable, msg = "") {
     if (disable) {
-      spinnersAmount.update((n) => n + 1);
+      $spinnersAmount++;
     } else {
-      spinnersAmount.update((n) => n - 1);
+      $spinnersAmount--;
     }
     if (msg) {
-      errorMsg.set(msg);
+      $errorMsg = msg;
     }
     return disable;
   }
 
+  const clearFields = () => {
+    for (const field of document.querySelectorAll("input")) {
+      field.value = "";
+    }
+    for (var member in tableInfo) delete tableInfo[member];
+  };
+
   const addSong = async () => {
+    addDisableFlag = changeFlag(true);
+
     if (
       !tableInfo.name ||
       !tableInfo.author ||
@@ -64,51 +66,59 @@
       addDisableFlag = changeFlag(false, "Adding empty values is not allowed!");
       return;
     }
-    addDisableFlag = changeFlag(true);
+
+    if (tableInfo.id) {
+      addDisableFlag = changeFlag(false, "ID is generated automatically!");
+      return;
+    }
+
     try {
       if (stringToNumber(tableInfo.listenings) <= 0) {
         throw "Listenings should be positive numbers!";
       }
-      await http.startExecuteMyMutation(
-        OperationDocsHelper.MUTATION_INSERT_ONE(
-          tableInfo.name,
-          tableInfo.author,
-          tableInfo.genre,
-          stringToNumber(tableInfo.listenings),
-        ),
-      );
+      await http.startExecuteMyMutation(OperationDocsHelper.MUTATION_INSERT(), {
+        name: tableInfo.name,
+        author: tableInfo.author,
+        genre: tableInfo.genre,
+        listenings: stringToNumber(tableInfo.listenings),
+      });
     } catch (err) {
       addDisableFlag = changeFlag(false, `Error -> ${err}`);
       return;
     }
+    clearFields();
     addDisableFlag = changeFlag(false, " ");
   };
 
   const deleteSong = async () => {
-    if (!tableInfo.name || !tableInfo.author) {
-      deleteDisableFlag = changeFlag(
-        false,
-        "Deleting empty values is not allowed!",
-      );
-      return;
-    }
-    if (tableInfo.genre || tableInfo.listenings) {
-      deleteDisableFlag = changeFlag(
-        false,
-        "Genre and listenings should be empty!",
-      );
-      return;
-    }
     deleteDisableFlag = changeFlag(true);
+    if (
+      tableInfo.name ||
+      tableInfo.author ||
+      tableInfo.genre ||
+      tableInfo.listenings
+    ) {
+      deleteDisableFlag = changeFlag(
+        false,
+        "All fields except for ID should be empty!",
+      );
+      return;
+    }
+
+    if (!tableInfo.id) {
+      deleteDisableFlag = changeFlag(false, "ID field is empty!");
+      return;
+    }
+
     try {
       await http.startExecuteMyMutation(OperationDocsHelper.MUTATION_DELETE(), {
-        name: tableInfo.name,
-        author: tableInfo.author,
+        id: stringToNumber(tableInfo.id),
       });
     } catch (err) {
       deleteDisableFlag = changeFlag(false, `Error -> ${err}`);
       return;
     }
+    clearFields();
     deleteDisableFlag = changeFlag(false, " ");
   };
 </script>
@@ -116,11 +126,12 @@
 <main>
   {#if $music.loading}
     <h1>loading ...</h1>
-    <Jumper size="60" color="#FF3E00" />
+    <Circle3 />
   {:else if $music.error}
     <h1>Error!</h1>
   {:else if $music.data}
-    <div>
+    <div class="form">
+      <input bind:value={tableInfo.id} placeholder="ID" />
       <input bind:value={tableInfo.name} placeholder="Name" />
       <input bind:value={tableInfo.author} placeholder="Author" />
       <input bind:value={tableInfo.genre} placeholder="Genre" />
@@ -132,26 +143,32 @@
         >Delete song</button
       >
     </div>
-    <table border="2">
-      <caption>Music</caption>
-      <tr>
-        <th>Name</th>
-        <th>Author</th>
-        <th>Listenings</th>
-        <th>Genre</th>
-      </tr>
-      {#each $music.data.lab3_music as song (song.id)}
+    {#if $music.data.lab3_music.length}
+      <table border="2">
+        <caption>Music</caption>
         <tr>
-          <td>{song.name}</td>
-          <td>{song.author}</td>
-          <td>{song.listenings}</td>
-          <td>{song.genre}</td>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Author</th>
+          <th>Listenings</th>
+          <th>Genre</th>
         </tr>
-      {/each}
-    </table>
-    <p>{errorValue}</p>
-    <div style="visibility:{spinnervalue > 0 ? 'visible' : 'hidden'}">
-      <Jumper size="60" color="#FF3E00" />
+        {#each $music.data.lab3_music as song (song.id)}
+          <tr>
+            <td>{song.id}</td>
+            <td>{song.name}</td>
+            <td>{song.author}</td>
+            <td>{song.listenings}</td>
+            <td>{song.genre}</td>
+          </tr>
+        {/each}
+      </table>
+    {:else}
+      <h2>Your playlist is empty. Add something!</h2>
+    {/if}
+    <p>{$errorMsg}</p>
+    <div class="spinner" class:visible={!$spinnersAmount}>
+      <Circle3 />
     </div>
   {/if}
 </main>
@@ -159,5 +176,9 @@
 <style>
   main {
     margin: 0;
+  }
+
+  .visible {
+    visibility: hidden;
   }
 </style>

@@ -2,11 +2,11 @@ import { errorMsg } from "./store";
 
 class RequestHelper {
   constructor() {
-    this.API_URL = API_ROOT;
+    this.API_ROOT = API_URL;
   }
 
   async fetchGraphQL(operationsDoc, operationName, variables) {
-    return fetch(this.API_URL, {
+    return fetch(this.API_ROOT, {
       method: "POST",
       body: JSON.stringify({
         query: operationsDoc,
@@ -24,7 +24,7 @@ class RequestHelper {
     const { errors, data } = await this.fetchMyQuery(operationsDoc);
 
     if (errors) {
-      errorMsg.set(`Error -> ${errors}`);
+      throw errors[0].message;
     }
 
     return data;
@@ -41,7 +41,7 @@ class RequestHelper {
     );
 
     if (errors) {
-      errorMsg.set(`Error -> ${errors}`);
+      throw errors[0].message;
     }
 
     return data;
