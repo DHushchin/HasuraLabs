@@ -47,10 +47,6 @@
     return disable;
   }
 
-  const clearFields = () => {
-    for (var member in tableInfo) tableInfo[member] = "";
-  };
-
   const addSong = async () => {
     addDisableFlag = changeFlag(true);
 
@@ -83,7 +79,7 @@
       addDisableFlag = changeFlag(false, `Error -> ${err}`);
       return;
     } finally {
-      clearFields();
+      for (let member in tableInfo) tableInfo[member] = "";
     }
 
     addDisableFlag = changeFlag(false, " ");
@@ -99,7 +95,7 @@
       deleteDisableFlag = changeFlag(false, `Error -> ${err}`);
       return;
     } finally {
-      clearFields();
+      for (let member in tableInfo) tableInfo[member] = "";
     }
     deleteDisableFlag = changeFlag(false, " ");
   };
