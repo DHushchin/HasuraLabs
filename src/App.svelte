@@ -48,10 +48,7 @@
   }
 
   const clearFields = () => {
-    for (const field of document.querySelectorAll("input")) {
-      field.value = "";
-    }
-    for (var member in tableInfo) delete tableInfo[member];
+    for (var member in tableInfo) tableInfo[member] = "";
   };
 
   const addSong = async () => {
@@ -85,40 +82,25 @@
     } catch (err) {
       addDisableFlag = changeFlag(false, `Error -> ${err}`);
       return;
+    } finally {
+      clearFields();
     }
-    clearFields();
+
     addDisableFlag = changeFlag(false, " ");
   };
 
-  const deleteSong = async () => {
+  const deleteSong = async (removeId) => {
     deleteDisableFlag = changeFlag(true);
-    if (
-      tableInfo.name ||
-      tableInfo.author ||
-      tableInfo.genre ||
-      tableInfo.listenings
-    ) {
-      deleteDisableFlag = changeFlag(
-        false,
-        "All fields except for ID should be empty!",
-      );
-      return;
-    }
-
-    if (!tableInfo.id) {
-      deleteDisableFlag = changeFlag(false, "ID field is empty!");
-      return;
-    }
-
     try {
       await http.startExecuteMyMutation(OperationDocsHelper.MUTATION_DELETE(), {
-        id: stringToNumber(tableInfo.id),
+        id: removeId,
       });
     } catch (err) {
       deleteDisableFlag = changeFlag(false, `Error -> ${err}`);
       return;
+    } finally {
+      clearFields();
     }
-    clearFields();
     deleteDisableFlag = changeFlag(false, " ");
   };
 </script>
@@ -131,7 +113,6 @@
     <h1>Error!</h1>
   {:else if $music.data}
     <div class="form">
-      <input bind:value={tableInfo.id} placeholder="ID" />
       <input bind:value={tableInfo.name} placeholder="Name" />
       <input bind:value={tableInfo.author} placeholder="Author" />
       <input bind:value={tableInfo.genre} placeholder="Genre" />
@@ -139,15 +120,11 @@
     </div>
     <div>
       <button on:click={addSong} disabled={addDisableFlag}>Add song</button>
-      <button on:click={deleteSong} disabled={deleteDisableFlag}
-        >Delete song</button
-      >
     </div>
     {#if $music.data.lab3_music.length}
       <table border="2">
-        <caption>Music</caption>
+        <caption><h2>Your playlist!</h2></caption>
         <tr>
-          <th>ID</th>
           <th>Name</th>
           <th>Author</th>
           <th>Listenings</th>
@@ -155,11 +132,16 @@
         </tr>
         {#each $music.data.lab3_music as song (song.id)}
           <tr>
-            <td>{song.id}</td>
             <td>{song.name}</td>
             <td>{song.author}</td>
             <td>{song.listenings}</td>
             <td>{song.genre}</td>
+            <td>
+              <button
+                on:click={() => deleteSong(song.id)}
+                disabled={deleteDisableFlag}>Delete song</button
+              >
+            </td>
           </tr>
         {/each}
       </table>

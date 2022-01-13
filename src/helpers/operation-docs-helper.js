@@ -7,7 +7,6 @@ export class OperationDocsHelper {
       lab3_music {
         author
         genre
-        id
         listenings
         name
       }
@@ -21,7 +20,6 @@ export class OperationDocsHelper {
       insert_lab3_music_one(object: {author: $author, genre: $genre, name: $name, listenings: $listenings}) {
         author
         genre
-        id
         listenings
         name
       }
@@ -36,7 +34,6 @@ export class OperationDocsHelper {
         returning {
           author
           genre
-          id
           listenings
           name
         }
