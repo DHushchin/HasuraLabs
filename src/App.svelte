@@ -76,6 +76,7 @@
       addDisableFlag = changeFlag(false, `Error -> ${err}`);
     } finally {
       form.reset();
+      for (let member in tableInfo) tableInfo[member] = "";
     }
 
     addDisableFlag = changeFlag(false, " ");
@@ -89,8 +90,6 @@
       });
     } catch (err) {
       deleteDisableFlag = changeFlag(false, `Error -> ${err}`);
-    } finally {
-      form.reset();
     }
     deleteDisableFlag = changeFlag(false, " ");
   };
