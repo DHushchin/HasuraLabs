@@ -25,6 +25,7 @@
   let addDisableFlag = false,
     deleteDisableFlag = false;
   const tableInfo = {};
+  let form;
 
   const client = createApolloClient();
   setClient(client);
@@ -36,11 +37,7 @@
   };
 
   function changeFlag(disable, msg = "") {
-    if (disable) {
-      $spinnersAmount++;
-    } else {
-      $spinnersAmount--;
-    }
+    disable ? $spinnersAmount++ : $spinnersAmount--;
     if (msg) {
       $errorMsg = msg;
     }
@@ -77,9 +74,8 @@
       });
     } catch (err) {
       addDisableFlag = changeFlag(false, `Error -> ${err}`);
-      return;
     } finally {
-      for (let member in tableInfo) tableInfo[member] = "";
+      form.reset();
     }
 
     addDisableFlag = changeFlag(false, " ");
@@ -93,9 +89,8 @@
       });
     } catch (err) {
       deleteDisableFlag = changeFlag(false, `Error -> ${err}`);
-      return;
     } finally {
-      for (let member in tableInfo) tableInfo[member] = "";
+      form.reset();
     }
     deleteDisableFlag = changeFlag(false, " ");
   };
@@ -108,16 +103,16 @@
   {:else if $music.error}
     <h1>Error!</h1>
   {:else if $music.data}
-    <div class="form">
+    <form bind:this={form}>
       <input bind:value={tableInfo.name} placeholder="Name" />
       <input bind:value={tableInfo.author} placeholder="Author" />
       <input bind:value={tableInfo.genre} placeholder="Genre" />
       <input bind:value={tableInfo.listenings} placeholder="Listenings" />
-    </div>
+    </form>
     <div>
       <button on:click={addSong} disabled={addDisableFlag}>Add song</button>
     </div>
-    {#if $music.data.lab3_music.length}
+    {#if $music.data.lab3_music?.length}
       <table border="2">
         <caption><h2>Your playlist!</h2></caption>
         <tr>
